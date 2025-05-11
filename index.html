@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đoán số bí mật</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-bottom: 30px;
+    }
+
+    .digit-control {
+      display: inline-block;
+      margin: 0 10px;
+    }
+
+    .arrow-btn {
+      display: block;
+      width: 60px;
+      height: 50px;
+      font-size: 28px;
+      margin: 5px auto;
+      cursor: pointer;
+    }
+
+    .number-box {
+      width: 60px;
+      height: 60px;
+      font-size: 36px;
+      text-align: center;
+      margin: 5px auto;
+    }
+
+    button#check {
+      font-size: 24px;
+      margin-top: 30px;
+      padding: 10px 30px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 24px;
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 30px;
+      color: green;
+      font-weight: bold;
+    }
+
+    .history-line {
+      font-size: 22px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Nhập dãy số bí mật</h1>
+
+  <div id="input-area"></div>
+
+  <button id="check" onclick="kiemTra()">Kiểm tra</button>
+	<div id="guess-count" style="margin-top: 20px; font-size: 24px;">
+ 	Số lần đoán: 0
+	</div>
+
+  <div id="result"></div>
+  <div id="message"></div>
+
+  <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+  <audio id="checkSound" src="check.mp3" preload="auto"></audio>
+
+
+  <script>
+    // 🔧 Cấu hình số lượng chữ số ở đây:
+    const soLuongChuSo = 6;
+	let soLanDoan = 0;
+
+    // 🔒 Mã bí mật (cần dài bằng `soLuongChuSo`)
+    const answer = ['2', '0', '1', '3', '5','7'];
+	document.getElementById("clickSound").volume = 0.1;
+	document.getElementById("checkSound").volume = 0.2;
+
+    // Tạo giao diện đầu vào động
+    const inputArea = document.getElementById("input-area");
+
+    for (let i = 0; i < soLuongChuSo; i++) {
+      const control = document.createElement("div");
+      control.className = "digit-control";
+      control.innerHTML = `
+        <button class="arrow-btn" onclick="tang(${i})">▲</button>
+        <input type="text" id="num${i}" class="number-box" value="0" readonly>
+        <button class="arrow-btn" onclick="giam(${i})">▼</button>
+      `;
+      inputArea.appendChild(control);
+    }
+
+    function tang(index) {
+      const input = document.getElementById(`num${index}`);
+      let value = parseInt(input.value);
+      value = (value + 1) % 10;
+      input.value = value;
+      document.getElementById("clickSound").play();
+    }
+
+    function giam(index) {
+      const input = document.getElementById(`num${index}`);
+      let value = parseInt(input.value);
+      value = (value - 1 + 10) % 10;
+      input.value = value;
+      document.getElementById("clickSound").play();
+    }
+
+    function kiemTra() {
+      document.getElementById("checkSound").play();
+
+	soLanDoan++;
+	document.getElementById("guess-count").innerText = `Số lần đoán: ${soLanDoan}`;
+
+      const userInput = [];
+      for (let i = 0; i < soLuongChuSo; i++) {
+        userInput.push(document.getElementById(`num${i}`).value);
+      }
+
+      const userString = userInput.join('');
+      let correctDigits = 0;
+      let correctPositions = 0;
+
+      // So sánh đúng vị trí
+      for (let i = 0; i < soLuongChuSo; i++) {
+        if (userInput[i] === answer[i]) {
+          correctPositions++;
+        }
+      }
+
+      // Đếm chữ số đúng
+      const answerCopy = [...answer];
+      userInput.forEach(num => {
+        const idx = answerCopy.indexOf(num);
+        if (idx !== -1) {
+          correctDigits++;
+          answerCopy[idx] = null;
+        }
+      });
+
+      const resultDiv = document.getElementById("result");
+
+      if (correctPositions === soLuongChuSo) {
+        resultDiv.innerHTML = "";
+        document.getElementById("message").innerText = "Thầy Luân Khen nhé!!!";
+      } else {
+        const resultLine = document.createElement("div");
+        resultLine.className = "history-line";
+        resultLine.innerText = `Số ${userString} có ${correctDigits} chữ số đúng, trong đó có ${correctPositions} chữ số đúng vị trí.`;
+        resultDiv.prepend(resultLine);
+        document.getElementById("message").innerText = "";
+      }
+    }
+  </script>
+</body>
+</html>
