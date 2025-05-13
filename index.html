@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Đoán số bí mật</title>
+  <title>Mystery Passwordt</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     body {
@@ -65,11 +65,11 @@
 </head>
 <body>
 
-  <h1>Nhập dãy số bí mật</h1>
+  <h1>Guessing the code</h1>
 
   <div id="input-area"></div>
 
-  <button id="check" onclick="kiemTra()">Kiểm tra</button>
+  <button id="check" onclick="kiemTra()">Check</button>
 	<div id="guess-count" style="margin-top: 20px; font-size: 24px;">
  	Số lần đoán: 0
 	</div>
@@ -161,7 +161,7 @@
       } else {
         const resultLine = document.createElement("div");
         resultLine.className = "history-line";
-        resultLine.innerText = `Số ${userString} có ${correctDigits} chữ số đúng, trong đó có ${correctPositions} chữ số đúng vị trí.`;
+        resultLine.innerText = `The code ${userString} has ${correctDigits} correct digit, and ${correctPositions} correct digit in right place.`;
         resultDiv.prepend(resultLine);
         document.getElementById("message").innerText = "";
       }
